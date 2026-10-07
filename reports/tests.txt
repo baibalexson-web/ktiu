@@ -1,0 +1,44 @@
+✔ all 464 current records match independently extracted reference fields (2456.542986ms)
+✔ all seven October 3 PDFs retain the exact previous 466 records (2092.260881ms)
+✔ Fedorov has 19 source blocks and 20 published pairs in current PDFs (4.581725ms)
+✔ shared groups are one record and distinct subgroup staff stay separate (0.159685ms)
+✔ single merged subject keeps two teachers and two rooms (13.138791ms)
+✔ same teacher in a merged subject can move room at the next pair (11.367494ms)
+✔ comma typo after teacher initials does not lose history lesson (257.685986ms)
+✔ source dates from different weeks are reported and never shifted (246.773086ms)
+✔ full name, ё/е and unusual initials search correctly (0.58367ms)
+✔ CSV and calendar use actual current URL and exclude curator (7.376139ms)
+✔ parsing saved PDF never makes a network request (203.882332ms)
+✔ invalid PDF is rejected (0.901787ms)
+✔ server serves local assets and 464 saved records with zero network calls (2379.920331ms)
+✔ local PDF is the exact document used in active timetable (13.91208ms)
+✔ check is available without any download or internet request (1955.957344ms)
+✔ download does not alter visible data and concurrent mutation is refused (35.519828ms)
+✔ explicit check activates complete downloaded snapshot (1678.169862ms)
+✔ failed download keeps active records and report names failing source (28.80899ms)
+✔ write requests require app header and same origin; source files are not exposed (5.06776ms)
+✔ broken pending metadata does not block opening checked timetable or re-downloading (4.570348ms)
+✔ discovery selects full-time classes of college and excludes exams (2.945306ms)
+✔ new month and PDF filename are discovered (3.476208ms)
+✔ missing and duplicate source links fail without static fallback (0.984279ms)
+✔ unofficial and insecure sources are refused (0.268655ms)
+✔ download and check are separate; check performs no network request (2391.934126ms)
+✔ failure of one PDF preserves active and existing pending snapshot (48.715984ms)
+✔ changed bytes at same URL are downloaded and hashed again (42.991197ms)
+✔ damaged PDF and parser failure cannot publish incomplete data (1826.814932ms)
+✔ initial UI shows Fedorov, 19 source cards and 20 pairs (2968.094901ms)
+✔ full name search and Enter choose teacher (18.712868ms)
+✔ day filter changes cards while CSV exports whole selected week (21.116916ms)
+✔ source dialog lists seven local files and official URLs (6.217844ms)
+✔ curator checkbox and week filter use actual records (52.84385ms)
+✔ download button leaves active cards untouched until separate check button (1905.599172ms)
+✔ failed download shows report and preserves previous timetable (63.29103ms)
+✔ print action is connected (0.330907ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6610.16884

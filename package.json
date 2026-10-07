@@ -1,0 +1,16 @@
+{
+  "name": "agatu-ktiu-schedule-js",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Расписание преподавателей АГАТУ КТиУ на JavaScript",
+  "engines": { "node": ">=24.5.0" },
+  "devDependencies": { "jsdom": "26.1.0" },
+  "scripts": {
+    "start": "node server.mjs",
+    "start:local": "node server.mjs --open",
+    "test": "node --test tests/*.test.mjs",
+    "download": "node cli.mjs download",
+    "check": "node cli.mjs check"
+  }
+}

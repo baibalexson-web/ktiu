@@ -1,0 +1,50 @@
+{
+  "format": 2,
+  "kind": "bundled",
+  "page_url": "https://agatu.ru/obuchauschimsya/raspisanie/",
+  "downloaded_at": "2026-10-03T02:44:42+00:00",
+  "sources": {
+    "it": {
+      "filename": "it.pdf",
+      "url": "https://agatu.ru/wp-content/uploads/2026/10/09.02.07.-informaczionnye-sistemy-i-programmirovanie.pdf",
+      "size": 699060,
+      "sha256": "d19c6506864f66f9a0b1ffb14aebf1b4279179cce187b19b1afbe8f98622997f"
+    },
+    "software": {
+      "filename": "software.pdf",
+      "url": "https://agatu.ru/wp-content/uploads/2026/10/09.02.11-razrabotka-i-upravlenie-programmnym-obespecheniem.pdf",
+      "size": 425427,
+      "sha256": "15ed471596155092b7f359dc655108cb422fd45c6f598bc4a33714260e99331a"
+    },
+    "heat": {
+      "filename": "heat.pdf",
+      "url": "https://agatu.ru/wp-content/uploads/2026/10/13.02.02.teplosnabzhenie-i-to.pdf",
+      "size": 589804,
+      "sha256": "19e32bfba5565bb719e42f60e7855126866a07507fe6569632fe92710cc86746"
+    },
+    "zoo": {
+      "filename": "zoo.pdf",
+      "url": "https://agatu.ru/wp-content/uploads/2026/10/36.02.03.-zootehniya.pdf",
+      "size": 525229,
+      "sha256": "1e57994bc28629b82b2c2bdd5be4ab0d4433f42290e14f92ffb4903b6c80303e"
+    },
+    "accounting": {
+      "filename": "accounting.pdf",
+      "url": "https://agatu.ru/wp-content/uploads/2026/10/38.02.01.-ekonomika-i-buhgalterskij-uchet-po-otraslyam.pdf",
+      "size": 518819,
+      "sha256": "44f5e111189b7d57a3386b046333fe35b75fa4d03b70b823c6dcd4bb48b072b3"
+    },
+    "culinary": {
+      "filename": "culinary.pdf",
+      "url": "https://agatu.ru/wp-content/uploads/2026/10/43.02.15-povarskoe-i-konditerskoe-delo.pdf",
+      "size": 786196,
+      "sha256": "a67a48af915acdf54c7350e0d5a698a591a30e57fe6a7cade6ce59bf33d9d5dc"
+    },
+    "law": {
+      "filename": "law_v2.pdf",
+      "url": "https://agatu.ru/wp-content/uploads/2026/10/40.02.04.-yurisprudencziya.pdf",
+      "size": 878438,
+      "sha256": "acd86829be3ff9fbb5efda389c4ee8d47a849d6ab437575e52ccd7e01a1a1684"
+    }
+  }
+}
