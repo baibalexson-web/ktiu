@@ -2,49 +2,49 @@
   "format": 2,
   "kind": "bundled",
   "page_url": "https://agatu.ru/obuchauschimsya/raspisanie/",
-  "downloaded_at": "2026-10-05T05:29:22.864Z",
+  "downloaded_at": "2026-10-10T03:40:28.220Z",
   "sources": {
     "it": {
-      "url": "https://agatu.ru/wp-content/uploads/2026/10/09.02.07.-informaczionnye-sistemy-i-programmirovanie-1.pdf",
+      "url": "https://agatu.ru/wp-content/uploads/2026/10/09.02.07.-informaczionnye-sistemy-i-programmirovanie-3.pdf",
       "filename": "it.pdf",
-      "size": 698699,
-      "sha256": "c5aabaa0bcc58376b2207c5c2f9c8c74b5f5461331af6223347fc3e9223676e2"
+      "size": 703519,
+      "sha256": "7b1fdfe02e75ab1fec2c9c1777142ce6a7950683ae57eebcbefb7080da144109"
     },
     "software": {
-      "url": "https://agatu.ru/wp-content/uploads/2026/10/09.02.11-razrabotka-i-upravlenie-programmnym-obespecheniem.pdf",
+      "url": "https://agatu.ru/wp-content/uploads/2026/10/09.02.11-razrabotka-i-upravlenie-programmnym-obespecheniem-1.pdf",
       "filename": "software.pdf",
-      "size": 425427,
-      "sha256": "15ed471596155092b7f359dc655108cb422fd45c6f598bc4a33714260e99331a"
+      "size": 424770,
+      "sha256": "3ea3685249904972db8e2f6931432f1aa03d90176f21f6d82a56573b4f50985d"
     },
     "heat": {
-      "url": "https://agatu.ru/wp-content/uploads/2026/10/13.02.02.teplosnabzhenie-i-to.pdf",
+      "url": "https://agatu.ru/wp-content/uploads/2026/10/13.02.02.teplosnabzhenie-i-to-2.pdf",
       "filename": "heat.pdf",
-      "size": 589804,
-      "sha256": "19e32bfba5565bb719e42f60e7855126866a07507fe6569632fe92710cc86746"
+      "size": 586823,
+      "sha256": "b35eb2bd8cfe02796a574710530ad238fc7a991c9ddccb5efa49a2cd2c4024cb"
     },
     "zoo": {
-      "url": "https://agatu.ru/wp-content/uploads/2026/10/36.02.03.-zootehniya.pdf",
+      "url": "https://agatu.ru/wp-content/uploads/2026/10/36.02.03.-zootehniya-3.pdf",
       "filename": "zoo.pdf",
-      "size": 525229,
-      "sha256": "1e57994bc28629b82b2c2bdd5be4ab0d4433f42290e14f92ffb4903b6c80303e"
+      "size": 528786,
+      "sha256": "f057f003980cfc8826c062526e821e1f5ed640704aff9c668fdc06da47502829"
     },
     "accounting": {
-      "url": "https://agatu.ru/wp-content/uploads/2026/10/38.02.01.-ekonomika-i-buhgalterskij-uchet-po-otraslyam.pdf",
+      "url": "https://agatu.ru/wp-content/uploads/2026/10/38.02.01.-ekonomika-i-buhgalterskij-uchet-po-otraslyam-2.pdf",
       "filename": "accounting.pdf",
-      "size": 518819,
-      "sha256": "44f5e111189b7d57a3386b046333fe35b75fa4d03b70b823c6dcd4bb48b072b3"
+      "size": 537022,
+      "sha256": "423c7b6182fcb6da44c97217b86d6a17726c6ce01e5bbdc6d6346d631510fcb1"
     },
     "culinary": {
-      "url": "https://agatu.ru/wp-content/uploads/2026/10/43.02.15-povarskoe-i-konditerskoe-delo.pdf",
+      "url": "https://agatu.ru/wp-content/uploads/2026/10/43.02.15-povarskoe-i-konditerskoe-delo-3.pdf",
       "filename": "culinary.pdf",
-      "size": 786196,
-      "sha256": "a67a48af915acdf54c7350e0d5a698a591a30e57fe6a7cade6ce59bf33d9d5dc"
+      "size": 689826,
+      "sha256": "5a14e0d8001d1fe1e19ae5a17228be5e840b53a180f686e103daa4533b543393"
     },
     "law": {
-      "url": "https://agatu.ru/wp-content/uploads/2026/10/40.02.04.-yurisprudencziya-1.pdf",
+      "url": "https://agatu.ru/wp-content/uploads/2026/10/40.02.04.-yurisprudencziya-4.pdf",
       "filename": "law_v2.pdf",
-      "size": 878400,
-      "sha256": "d2e950f70f36b360beb7369234968f8aae1ac68fdb0cba330f4a7c2fa5abce59"
+      "size": 878437,
+      "sha256": "243a5456b80eb867d061fa0cd561171e8959435673ac93d8e218d9f2beccc605"
     }
   }
 }
