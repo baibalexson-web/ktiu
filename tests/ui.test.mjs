@@ -21,7 +21,8 @@ const $=id=>doc.getElementById(id);
 async function idle(){const deadline=Date.now()+15000;while(client.state.busy){if(Date.now()>deadline)throw Error('UI operation timed out');await new Promise(resolve=>setTimeout(resolve,20));}}
 test('initial UI shows Fedorov, 19 source cards and 20 pairs',()=>{
   assert.equal($('heading').textContent,'Федоров П.И.');assert.equal(doc.querySelectorAll('.lesson').length,19);assert.equal($('stat-lessons').textContent,'20');
-  assert.equal(doc.querySelectorAll('.teacher').length,35);assert.ok(!$('download-button').disabled);assert.ok(!$('check-button').disabled);
+  assert.equal(doc.querySelectorAll('.teacher').length,35);assert.ok(!$('update-button').disabled);
+  assert.equal(doc.querySelectorAll('.steps button').length,1);
 });
 test('full name search and Enter choose teacher',()=>{
   $('search').value='Фёдоров Павел Иванович';$('search').dispatchEvent(new dom.window.Event('input'));
@@ -47,18 +48,15 @@ test('curator checkbox and week filter use actual records',()=>{
   assert.equal(doc.querySelectorAll('.lesson').length,0);assert.match($('schedule').textContent,/Нет занятий/);
   $('week').value='2026-10-05';$('week').dispatchEvent(new dom.window.Event('change'));
 });
-test('download button leaves active cards untouched until separate check button',async()=>{
-  mode='old';const before=client.state.data.rows;$('download-button').click();assert.ok(client.state.busy);await idle();
-  assert.equal(client.state.data.rows.length,before.length);assert.equal(doc.querySelectorAll('.lesson').length,19);
-  assert.ok($('check-button').classList.contains('ready'));assert.match($('check-caption').textContent,/Новый набор/);
-  $('check-button').click();assert.ok(client.state.busy);await idle();
+test('one update button downloads, checks and displays the new timetable',async()=>{
+  mode='old';$('update-button').click();assert.ok(client.state.busy);await idle();
   assert.equal(client.state.data.rows.length,466);assert.equal(doc.querySelectorAll('.lesson').length,18);
-  assert.ok(!$('check-button').classList.contains('ready'));
+  assert.match($('status').textContent,/обновлено/);
 });
 test('failed download shows report and preserves previous timetable',async()=>{
-  mode='failure';const before=JSON.stringify(client.state.data.rows);$('download-button').click();await idle();
+  mode='failure';const before=JSON.stringify(client.state.data.rows);$('update-button').click();await idle();
   assert.equal(JSON.stringify(client.state.data.rows),before);assert.ok($('report-dialog').open);assert.match($('report-content').textContent,/40.02.04/);
-  assert.ok(!$('download-button').disabled);assert.ok(!$('check-button').disabled);
+  assert.ok(!$('update-button').disabled);
   $('save-report').click();assert.match(await downloads.at(-1).blob.text(),/Набор не скачан полностью/);
 });
 test('print action is connected',()=>{$('print-button').click();assert.equal(printed,1)});

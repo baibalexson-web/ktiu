@@ -12,7 +12,7 @@ const STATIC=new Map([['/','index.html'],['/index.html','index.html'],['/app.mjs
   ['/shared.mjs','shared.mjs'],['/boot.js','boot.js'],['/style.css','style.css'],['/logo.png','logo.png']]);
 const MIME={'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8',
   '.css':'text/css; charset=utf-8','.png':'image/png'};
-const PRODUCT='agatu-ktiu-javascript-v1';
+const PRODUCT='agatu-ktiu-web-v1.3.0';
 const sameSecret=(provided,expected)=>{
   if(typeof provided!=='string'||!provided)return false;
   const digest=value=>createHash('sha256').update(value).digest();
@@ -46,7 +46,7 @@ export async function createApp({cache=process.env.AGATU_CACHE_DIR||DEFAULT_CACH
       if(request.method==='GET'&&url.pathname==='/api/health')return json(response,200,{product:PRODUCT});
       if(request.method==='GET'&&url.pathname==='/api/state'){
         let pending=null,pendingWarning='';
-        try{pending=await pendingSummary(cache)}catch(e){pendingWarning='Скачанный непроверенный набор недоступен. Повторите «Скачать». '+e.message;}
+        try{pending=await pendingSummary(cache)}catch(e){pendingWarning='Скачанный непроверенный набор недоступен. Повторите «Обновить расписание». '+e.message;}
         return json(response,200,{...analysis,pending,protectedUpdates:publicMode,startupWarning:[startupWarning,pendingWarning].filter(Boolean).join(' '),
           job:job?.status==='running'?job:null});
       }
@@ -54,7 +54,7 @@ export async function createApp({cache=process.env.AGATU_CACHE_DIR||DEFAULT_CACH
       if(request.method==='GET'&&url.pathname==='/api/report'){
         response.writeHead(200,{...headerPolicy,'Content-Type':'text/plain; charset=utf-8'});response.end(report);return;
       }
-      if(request.method==='POST'&&['/api/download','/api/check'].includes(url.pathname)){
+      if(request.method==='POST'&&['/api/download','/api/check','/api/update'].includes(url.pathname)){
         const origin=request.headers.origin;
         const permittedOrigin=publicMode?origin===`https://${request.headers.host}`:
           (!origin||['http://'+request.headers.host,`http://127.0.0.1:${port}`,`http://localhost:${port}`].includes(origin));
@@ -64,13 +64,19 @@ export async function createApp({cache=process.env.AGATU_CACHE_DIR||DEFAULT_CACH
           return json(response,401,{error:'Неверный пароль обновления'});
         if(job?.status==='running')return json(response,409,{error:'Дождитесь завершения текущего действия'});
         request.resume();
-        job={id:randomUUID(),kind:url.pathname.endsWith('download')?'download':'check',status:'running',
-          message:'Начинаем…',done:0,total:7,error:null};
+        job={id:randomUUID(),kind:url.pathname.slice('/api/'.length),status:'running',
+          message:'Начинаем…',done:0,total:url.pathname.endsWith('update')?15:7,error:null};
         json(response,202,{job});
         const progress=(message,done,total)=>{Object.assign(job,{message,done,total})};
         setImmediate(async()=>{
           try{
-            if(job.kind==='download'){
+            if(job.kind==='update'){
+              const downloaded=await downloadSnapshot({cache,fetcher,progress:(message,done)=>progress(message,done,15)});
+              const checked=await checkAndActivate(downloaded,{cache,parser,
+                progress:(message,done)=>progress(message,8+done,15)});
+              analysis=checked;snapshot=downloaded;report=checked.report;startupWarning='';
+              job.message=checked.warnings.length?`Расписание обновлено с замечаниями (${checked.warnings.length}). Откройте отчёт.`:'Расписание обновлено.';
+            }else if(job.kind==='download'){
               const downloaded=await downloadSnapshot({cache,fetcher,progress});
               report='СКАЧИВАНИЕ PDF АГАТУ КТиУ\nСкачаны все 7 источников. Анализ ещё не выполнен.\n\n'+
                 JSON.stringify(summary(downloaded),null,2);
@@ -125,7 +131,7 @@ async function run(){
   try{url=await listen(server,8787)}catch(e){
     if(e.code!=='EADDRINUSE')throw e;
     try{const health=await fetch('http://127.0.0.1:8787/api/health',{signal:AbortSignal.timeout(2000)});
-      if((await health.json()).product===PRODUCT){if(process.argv.includes('--open'))openWindow('http://127.0.0.1:8787');console.log('Приложение уже открыто: http://127.0.0.1:8787');return;}}
+      if((await health.json()).product===PRODUCT){if(process.argv.includes('--open'))openWindow('http://127.0.0.1:8787');console.log('Эта версия уже открыта: http://127.0.0.1:8787');return;}}
     catch{}
     for(let port=8788;port<8798;port++){try{url=await listen(server,port);break}catch(error){if(error.code!=='EADDRINUSE')throw error}}
     if(!url)throw Error('Нет свободного локального порта 8787–8797');

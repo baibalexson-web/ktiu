@@ -38,13 +38,25 @@ test('changed bytes at same URL are downloaded and hashed again',async t=>{
   assert.equal(a.manifest.sources.it.url,b.manifest.sources.it.url);assert.notEqual(a.manifest.sources.it.sha256,b.manifest.sources.it.sha256);
   assert.equal(b.manifest.sources.it.sha256,sha256(oldIt));
 });
-test('damaged PDF and parser failure cannot publish incomplete data',async t=>{
+test('damaged PDF is reported while valid sources remain visible',async t=>{
   const cache=await temporary(t),a=await downloadSnapshot({cache,fetcher:fakeFetcher()});
-  await atomicJSON(path.join(cache,'active.json'),{snapshot:path.basename(a.folder)});const previous=await readFile(path.join(cache,'active.json'));
+  await atomicJSON(path.join(cache,'active.json'),{snapshot:path.basename(a.folder)});
   const b=await downloadSnapshot({cache,fetcher:fakeFetcher()}),file=path.join(b.folder,'it.pdf');
   await writeFile(file,Buffer.concat([pdfs.it,Buffer.from('changed')]));
-  await assert.rejects(checkAndActivate(b,{cache}),/повреждён или изменён/);assert.deepEqual(await readFile(path.join(cache,'active.json')),previous);
-  await writeFile(file,pdfs.it);
-  await assert.rejects(checkAndActivate(b,{cache,parser:()=>{throw Error('Unsupported page format')}}),/Unsupported page format/);
-  assert.deepEqual(await readFile(path.join(cache,'active.json')),previous);
+  const result=await checkAndActivate(b,{cache});
+  assert.ok(result.rows.length>0);assert.ok(result.rows.every(row=>row.source!=='it'));
+  assert.ok(result.warnings.some(w=>w.includes('09.02.07')&&w.includes('повреждён')));
+  assert.equal((await activeSnapshot(cache)).folder,b.folder);
+});
+test('one unreadable source does not block other teachers, but zero lessons keeps prior data',async t=>{
+  const cache=await temporary(t),a=await downloadSnapshot({cache,fetcher:fakeFetcher()});
+  await checkAndActivate(a,{cache});
+  const b=await downloadSnapshot({cache,fetcher:fakeFetcher()});
+  const partly=await checkAndActivate(b,{cache,parser:async(raw,key)=>{
+    if(key==='accounting')throw Error('Запись без времени');return parsePDF(raw,key);
+  }});
+  assert.ok(partly.rows.length>0);assert.ok(partly.warnings.some(w=>w.includes('38.02.01')&&w.includes('Запись без времени')));
+  const c=await downloadSnapshot({cache,fetcher:fakeFetcher()});
+  await assert.rejects(checkAndActivate(c,{cache,parser:()=>{throw Error('Все страницы не распознаны')}}),/Не удалось распознать ни одного занятия/);
+  assert.equal((await activeSnapshot(cache)).folder,b.folder);
 });

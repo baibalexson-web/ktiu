@@ -21,6 +21,12 @@ test('local PDF is the exact document used in active timetable',async()=>{
 test('check is available without any download or internet request',async()=>{
   const before=calls;assert.equal((await action('check')).status,202);assert.equal((await finish()).status,'done');assert.equal(calls,before);
 });
+test('one update action downloads and activates the new timetable',async()=>{
+  const before=calls;assert.equal((await action('update')).status,202);
+  const job=await finish();assert.equal(job.status,'done');assert.ok(calls>before);
+  const data=await (await fetch(url+'/api/state')).json();
+  assert.equal(data.meta.kind,'download');assert.equal(data.pending,null);assert.equal(data.rows.length,464);
+});
 test('download does not alter visible data and concurrent mutation is refused',async()=>{
   const before=app.getAnalysis();assert.equal((await action('download')).status,202);
   assert.equal((await action('check')).status,409);assert.equal((await finish()).status,'done');
@@ -44,6 +50,6 @@ test('broken pending metadata does not block opening checked timetable or re-dow
   const {writeFile,unlink}=await import('node:fs/promises');
   await writeFile(path.join(cache,'pending.json'),'{broken');
   const response=await fetch(url+'/api/state');assert.equal(response.status,200);
-  const data=await response.json();assert.equal(data.rows.length,464);assert.equal(data.pending,null);assert.match(data.startupWarning,/Повторите «Скачать»/);
+  const data=await response.json();assert.equal(data.rows.length,464);assert.equal(data.pending,null);assert.match(data.startupWarning,/Повторите «Обновить расписание»/);
   await unlink(path.join(cache,'pending.json'));
 });

@@ -43,6 +43,13 @@ test('source dates from different weeks are reported and never shifted',async()=
   assert.ok(r.rows.some(e=>e.page===3&&e.day==='2026-09-30'));assert.ok(!r.rows.some(e=>e.page===3&&e.day==='2026-10-07'));
   assert.ok(filterLessons(r.rows,{week:'2026-10-05',hideCurator:false}).every(e=>e.day>='2026-10-05'));
 });
+test('a timetable row without a time is skipped while the other accounting lessons remain',async()=>{
+  const changed=await parsePDF(await readFile(new URL('fixtures/accounting_missing_time.pdf',import.meta.url)),'accounting');
+  const original=await parsePDF(pdfs.accounting,'accounting');
+  assert.equal(changed.rows.length,original.rows.length-1);
+  assert.ok(changed.issues.some(issue=>issue.code==='no_time'&&issue.page===2));
+  assert.ok(changed.rows.every(row=>original.rows.some(entry=>canonical(entry)===canonical(row))));
+});
 test('full name, ё/е and unusual initials search correctly',()=>{
   assert.ok(matchesTeacher('Федоров П.И.','Фёдоров Павел Иванович'));
   assert.ok(matchesTeacher('Никаноров Дь.Н.','Никаноров Дь Н'));assert.ok(!matchesTeacher('Федоров П.И.','Федоров Алексей'));

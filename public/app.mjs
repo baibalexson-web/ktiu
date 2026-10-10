@@ -11,7 +11,7 @@ export function mountApp({document:doc=globalThis.document,window:win=globalThis
   function formatTime(value){return new Intl.DateTimeFormat('ru-RU',{timeZone:'Asia/Yakutsk',dateStyle:'short',timeStyle:'short'}).format(new Date(value))+' (Якутск)'}
   async function api(url,options){const response=await fetcher(url,options);const data=await response.json();if(!response.ok){const error=Error(data.error||'Ошибка сервера');error.status=response.status;throw error}return data}
   function setStatus(text,error=false){$('status').textContent=text;$('status-dot').classList.toggle('error',error)}
-  function busy(value){state.busy=value;for(const id of ['download-button','check-button'])$(id).disabled=value||!state.data;
+  function busy(value){state.busy=value;$('update-button').disabled=value||!state.data;
     $('progress').hidden=!value;$('status-dot').classList.toggle('busy',value)}
   function choose(name){state.selected=name;state.day=null;save('teacher',name);renderTeachers();renderSchedule()}
   const names=()=>[...new Set((state.data?.rows||[]).map(r=>r.teacher))].sort((a,b)=>a.localeCompare(b,'ru'));
@@ -67,12 +67,11 @@ export function mountApp({document:doc=globalThis.document,window:win=globalThis
     $('week').replaceChildren(...[...weeks.map(week=>{const option=el('option','',`${shortDate(week)} — ${shortDate(addDays(week,5))}`);option.value=week;return option}),
       Object.assign(el('option','','Все даты из PDF'),{value:''})]);
     $('week').value=state.week||'';
-    $('check-button').classList.toggle('ready',!!data.pending);
-    $('check-caption').textContent=data.pending?'Новый набор скачан — нажмите для проверки':'Прочитать сохранённые PDF и применить данные';
+    $('update-button').classList.toggle('ready',!!data.pending);
     $('admin-hint').hidden=!data.protectedUpdates;
     $('dataset-time').textContent=(data.meta.kind==='bundled'?'Встроенная копия':'Скачанные PDF')+' от '+formatTime(data.meta.downloadedAt);
     const warnings=data.warnings||[];$('warnings').hidden=!warnings.length;
-    $('warning-text').textContent=`В источниках есть замечания (${warnings.length}). Даты сохранены из PDF; недели показаны отдельно.`;
+    $('warning-text').textContent=`В источниках есть замечания (${warnings.length}). Некоторые записи могли быть пропущены; подробности в отчёте.`;
     if(resetWeek)state.day=null;
     renderTeachers();renderSchedule();busy(state.busy);
   }
@@ -97,7 +96,7 @@ export function mountApp({document:doc=globalThis.document,window:win=globalThis
       setStatus(job.message,job.status==='error');$('progress').max=job.total||7;$('progress').value=job.done||0;
       if(job.status==='running'){await new Promise(resolve=>win.setTimeout(resolve,pollDelay));continue;}
       if(job.status==='error'){state.report=job.error;$('report-content').textContent=job.error;$('report-dialog').showModal();return job;}
-      const data=await api('/api/state');applyData(data,{resetWeek:job.kind==='check'});setStatus(job.message);return job;
+      const data=await api('/api/state');applyData(data,{resetWeek:job.kind==='check'||job.kind==='update'});setStatus(job.message);return job;
     }
   }
   async function adminPassword(){
@@ -117,7 +116,7 @@ export function mountApp({document:doc=globalThis.document,window:win=globalThis
   async function run(kind){
     if(state.busy)return;
     const token=state.data?.protectedUpdates?await adminPassword():'';if(token===null)return;
-    busy(true);setStatus(kind==='download'?'Получаем актуальные ссылки с сайта…':'Проверяем сохранённые PDF…');
+    busy(true);setStatus(kind==='update'?'Скачиваем и проверяем расписание…':kind==='download'?'Получаем актуальные ссылки с сайта…':'Проверяем сохранённые PDF…');
     try{await api('/api/'+kind,{method:'POST',headers:{'X-AGATU-Action':'1',...(state.data?.protectedUpdates?{'X-AGATU-Admin-Token':token}:{})}});return await watchJob()}
     catch(e){if(e.status===401)state.adminToken='';setStatus(e.status===401?'Неверный пароль обновления. Повторите действие.':'Не удалось завершить действие. Прежнее расписание сохранено.',true);state.report=e.message;
       $('report-content').textContent=e.message;$('report-dialog').showModal();}
@@ -128,7 +127,7 @@ export function mountApp({document:doc=globalThis.document,window:win=globalThis
   $('week').addEventListener('change',()=>{state.week=$('week').value||null;state.day=null;renderSchedule()});
   $('hide-curator').checked=saved('hide-curator','true')!=='false';
   $('hide-curator').addEventListener('change',()=>{save('hide-curator',String($('hide-curator').checked));state.day=null;renderSchedule()});
-  $('download-button').addEventListener('click',()=>run('download'));$('check-button').addEventListener('click',()=>run('check'));
+  $('update-button').addEventListener('click',()=>run('update'));
   $('sources-button').addEventListener('click',sources);$('report-button').addEventListener('click',report);$('warning-report').addEventListener('click',report);
   doc.querySelectorAll('[data-close]').forEach(button=>button.addEventListener('click',()=>$(button.dataset.close).close()));
   for(const id of ['sources-dialog','report-dialog'])$(id).addEventListener('click',e=>{if(e.target===$(id)){const rect=$(id).getBoundingClientRect();if(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom)$(id).close()}});
@@ -138,7 +137,7 @@ export function mountApp({document:doc=globalThis.document,window:win=globalThis
   $('print-button').addEventListener('click',()=>win.print());
   const ready=(async()=>{
     try{const data=await api('/api/state');applyData(data,{resetWeek:true});
-      setStatus(data.startupWarning||`${data.meta.kind==='bundled'?'Открыта встроенная копия':'Открыт проверенный набор'} · PDF от ${formatTime(data.meta.downloadedAt)}`+(data.pending?' · Новый набор скачан: нажмите «Проверить».':''));
+      setStatus(data.startupWarning||`${data.meta.kind==='bundled'?'Открыта встроенная копия':'Открыт проверенный набор'} · PDF от ${formatTime(data.meta.downloadedAt)}`+(data.pending?' · Есть ранее скачанный набор: «Обновить расписание» загрузит актуальный.':''));
       if(data.job){busy(true);try{await watchJob()}finally{busy(false)}}
     }catch(e){setStatus('Не удалось подключиться к расписанию. Обновите страницу. '+e.message,true);
       if(win.location.protocol==='file:')$('file-help').hidden=false;busy(false)}
